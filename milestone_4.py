@@ -434,7 +434,3 @@ st.markdown("**Note:** This dashboard displays real-time air quality monitoring 
 
 
 
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/Parasuram2530/Infosys-Springboard.git
-git push -u origin main
