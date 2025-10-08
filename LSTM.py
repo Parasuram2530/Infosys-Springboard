@@ -266,8 +266,8 @@ print("\nTop 5 Most Important Features:")
 print(importance_df.tail(5))
 
 # Save the model
-model.save('pm25_lstm_model.h5')
-print("\nLSTM model saved as 'pm25_lstm_model.h5'")
+# model.save('pm25_lstm_model.h5')
+# print("\nLSTM model saved as 'pm25_lstm_model.h5'")
 
 # Comparison with Random Forest (if available)
 print("\n" + "="*50)
@@ -275,3 +275,6 @@ print("COMPARISON WITH RANDOM FOREST (from notebook)")
 print("="*50)
 print("Note: Compare these LSTM results with the Random Forest results")
 print("from the original notebook to see which performs better.")
+
+model.save(r'E:\AQI-Project-master\pm25_lstm_model.h5')
+print("LSTM model successfully saved at E:\\AQI-Project-master\\pm25_lstm_model.h5")
