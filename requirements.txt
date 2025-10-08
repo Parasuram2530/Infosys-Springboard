@@ -1,0 +1,9 @@
+numpy
+pandas
+scikit-learn
+tensorflow==2.15.0
+matplotlib
+plotly
+streamlit
+requests
+python-dotenv

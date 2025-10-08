@@ -82,15 +82,15 @@ def get_health_advice(aqi_category):
     }
     return advice.get(aqi_category, "No advice.")
 
-def predict_next_pm25():
-    latest_features = df_hist[FEATURE_COLS].iloc[-TIME_STEPS:].values
-    if latest_features.shape[1] != lstm_model.input_shape[2]:
-        st.warning("Feature dimension mismatch with LSTM model. Cannot predict PM2.5.")
-        return None
-    X_seq = latest_features.reshape(1, TIME_STEPS, len(FEATURE_COLS))
-    y_pred_scaled = lstm_model.predict(X_seq, verbose=0)
-    next_pm25 = scaler_y.inverse_transform(y_pred_scaled)[0][0]
-    return next_pm25
+# def predict_next_pm25():
+#     latest_features = df_hist[FEATURE_COLS].iloc[-TIME_STEPS:].values
+#     if latest_features.shape[1] != lstm_model.input_shape[2]:
+#         st.warning("Feature dimension mismatch with LSTM model. Cannot predict PM2.5.")
+#         return None
+#     X_seq = latest_features.reshape(1, TIME_STEPS, len(FEATURE_COLS))
+#     y_pred_scaled = lstm_model.predict(X_seq, verbose=0)
+#     next_pm25 = scaler_y.inverse_transform(y_pred_scaled)[0][0]
+#     return next_pm25
 
 # ================== STREAMLIT LAYOUT ==================
 st.set_page_config(page_title="AirAware – Real-time AQI + LSTM", layout="wide")
@@ -170,11 +170,34 @@ if city:
         st.info(get_health_advice(aqi_cat))
 
         st.markdown("### 🔮 Predicted PM2.5 for Next Time Step")
-        next_pm25 = predict_next_pm25()
-        if next_pm25 is not None:
-            st.metric("Predicted PM2.5", round(next_pm25,2))
-            if next_pm25 > alert_thresh:
-                st.error(f"Forecast PM2.5 High: {round(next_pm25,2)} — Take precautions!")
+        import streamlit as st
+        import pandas as pd
+        import plotly.express as px
+
+        st.title("📊 PM2.5 Forecast from CSV")
+
+        # File path (adjust if needed)
+        CSV_PATH = "pm25_next_24h.csv"
+
+        try:
+            # Load CSV
+            df = pd.read_csv(CSV_PATH)
+
+            st.subheader("Raw Data Preview")
+            st.dataframe(df.head())  # shows first few rows in interactive table
+
+            # Plot forecast
+            if "Hour" in df.columns and "Predicted_PM25" in df.columns:
+                fig = px.line(df, x="Hour", y="Predicted_PM25",
+                            title="Next 24 Hours PM2.5 Forecast",
+                            markers=True)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.warning("CSV must contain 'Hour' and 'Predicted_PM25' columns.")
+
+        except FileNotFoundError:
+            st.error(f"CSV file not found at: {CSV_PATH}")
+
 
         # Historical trends
         st.markdown("### 📊 Historical Trends (PM2.5 & Pollutants)")
